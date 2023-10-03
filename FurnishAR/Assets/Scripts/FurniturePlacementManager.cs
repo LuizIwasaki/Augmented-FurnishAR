@@ -9,10 +9,10 @@ using UnityEngine.EventSystems;
 public class FurniturePlacementManager : MonoBehaviour
 {
     public GameObject SpawnableFurniture;
-    public ARSessionOrigin arOrigin; 
-
+    public ARSessionOrigin arOrigin;
     public ARRaycastManager raycastManager; 
-    public ARPlaneManager planeManager; 
+    public ARPlaneManager planeManager;
+    public ObjectRemovalManager removalManager;
 
     private List<ARRaycastHit> raycastHits = new List<ARRaycastHit>(); 
 
@@ -21,7 +21,8 @@ public class FurniturePlacementManager : MonoBehaviour
     {
         if(Input.touchCount > 0)
         {
-            if(Input.GetTouch(0).phase == TouchPhase.Began)
+            Touch touch = Input.GetTouch(0);
+            if(touch.phase == TouchPhase.Began)
             {
                bool collison = raycastManager.Raycast(Input.GetTouch(0).position, raycastHits, TrackableType.PlaneWithinPolygon);
                if(collison && !isButtonPressed())
@@ -30,7 +31,8 @@ public class FurniturePlacementManager : MonoBehaviour
                     _object.transform.position = raycastHits[0].pose.position;
                     _object.transform.rotation = raycastHits[0].pose.rotation;
 
-               }
+                    removalManager.AddPlacedFurnitureObject(_object);
+                }
 
                foreach(var plane in planeManager.trackables)
                 {
@@ -59,4 +61,11 @@ public class FurniturePlacementManager : MonoBehaviour
     {
         SpawnableFurniture = furniture;
     }
+
+    public void RemoveAllPlacedFurniture()
+    {
+        // Call the ObjectRemovalManager to remove all placed furniture
+        removalManager.RemoveAllPlacedFurniture();
+    }
+
 }
