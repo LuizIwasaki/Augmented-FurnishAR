@@ -14,32 +14,34 @@ public class FurniturePlacementManager : MonoBehaviour
     public ARPlaneManager planeManager;
     public ObjectRemovalManager removalManager;
 
-    private List<ARRaycastHit> raycastHits = new List<ARRaycastHit>(); 
+    private List<ARRaycastHit> raycastHits = new List<ARRaycastHit>();
 
+
+    public void Start()
+    {
+
+        planeManager.enabled = true;
+    }
 
     private void Update()
     {
+        planeManager.enabled = true; //reativate the plane manager if it was deactivated by the ObjectRemovalManager
+
         if(Input.touchCount > 0)
         {
-            Touch touch = Input.GetTouch(0);
+            Touch touch = Input.GetTouch(0); 
+
             if(touch.phase == TouchPhase.Began)
             {
-               bool collison = raycastManager.Raycast(Input.GetTouch(0).position, raycastHits, TrackableType.PlaneWithinPolygon);
+               bool collison = raycastManager.Raycast(touch.position, raycastHits, TrackableType.PlaneWithinPolygon); // get the position of the touch and check if it collides with a plane
                if(collison && !isButtonPressed())
                {
-                    GameObject _object = Instantiate(SpawnableFurniture);
-                    _object.transform.position = raycastHits[0].pose.position;
-                    _object.transform.rotation = raycastHits[0].pose.rotation;
+                    GameObject _object = Instantiate(SpawnableFurniture); 
+                    _object.transform.position = raycastHits[0].pose.position; // set the position of the furniture object to the position of the raycast hit
+                    _object.transform.rotation = raycastHits[0].pose.rotation; // set the rotation of the furniture object to the rotation of the raycast hit
 
-                    removalManager.AddPlacedFurnitureObject(_object);
+                    removalManager.AddPlacedFurnitureObject(_object); // call the ObjectRemovalManager to add the placed furniture object to the list of placed furniture objects
                 }
-
-               foreach(var plane in planeManager.trackables)
-                {
-                    plane.gameObject.SetActive(false);
-               }
-
-               planeManager.enabled = false;
 
             }
         }
@@ -47,14 +49,7 @@ public class FurniturePlacementManager : MonoBehaviour
 
     public bool isButtonPressed()
     {
-        if(EventSystem.current.currentSelectedGameObject?.GetComponents<Button>() == null)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return EventSystem.current.currentSelectedGameObject?.GetComponent<Button>() != null;
     }
 
     public void SwitchFurniture(GameObject furniture)
@@ -64,7 +59,7 @@ public class FurniturePlacementManager : MonoBehaviour
 
     public void RemoveAllPlacedFurniture()
     {
-        // Call the ObjectRemovalManager to remove all placed furniture
+
         removalManager.RemoveAllPlacedFurniture();
     }
 
