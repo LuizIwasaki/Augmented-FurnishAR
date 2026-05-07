@@ -7,6 +7,7 @@
 **FurnishAR** is a high-fidelity Augmented Reality (AR) application built with Unity and AR Foundation. It allows users to visualize furniture and decor in their real-world environment before making a purchase. By leveraging advanced surface detection and spatial tracking, FurnishAR provides a seamless "try before you buy" experience.
 
 ---
+---
 
 ## 🌟 Key Features
 
